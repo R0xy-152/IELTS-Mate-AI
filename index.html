@@ -277,11 +277,11 @@
 
     <nav class="sidebar">
         <div class="logo">IELTS-Mate.</div>
-        <div class="nav-links">
-            <div class="nav-item active" onclick="switchTab('home')">首页 (Home)</div>
-            <div class="nav-item" onclick="switchTab('search')">查单词 (Lookup)</div>
-            <div class="nav-item" onclick="switchTab('ai-chat')">AI 语伴 (AI Chat)</div>
-            <div class="nav-item" onclick="switchTab('personalize')">个性化流 (Flow)</div>
+<div class="nav-links">
+            <div class="nav-item active" onclick="switchTab('home', event)">首页 (Home)</div>
+            <div class="nav-item" onclick="switchTab('search', event)">查单词 (Lookup)</div>
+            <div class="nav-item" onclick="switchTab('ai-chat', event)">AI 语伴 (AI Chat)</div>
+            <div class="nav-item" onclick="switchTab('personalize', event)">个性化流 (Flow)</div>
         </div>
     </nav>
 
@@ -310,6 +310,7 @@
                 <h2 style="font-size: 48px; margin-bottom: 5px;" id="res-word">Word</h2>
                 <p style="color: var(--text-secondary); margin-bottom: 20px;" id="res-pos">pos.</p>
                 <h3 style="margin-bottom: 15px;" id="res-cn">中文含义</h3>
+                <p style="font-style: italic; color: var(--text-secondary); margin-bottom: 15px;" id="res-en-def">English definition...</p>
                 <p style="line-height: 1.6; font-size: 16px; background: #fafafa; padding: 15px; border-radius: 12px;" id="res-example">例句...</p>
                 
                 <div class="media-grid">
@@ -346,268 +347,214 @@
             <div class="card">
                 <h3 style="margin-bottom: 20px;">选择你的兴趣标签</h3>
                 <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 15px;">AI 将根据这些标签为你生成专属阅读材料和单词本。</p>
-                <div class="interest-tags">
-                    <div class="interest-tag selected">🏗️ 建筑与环境 (Architecture)</div>
-                    <div class="interest-tag selected">🎮 电子竞技 (Esports)</div>
-                    <div class="interest-tag selected">🎬 动漫 (Anime)</div>
-                    <div class="interest-tag">🎵 音乐 (Music)</div>
-                    <div class="interest-tag">🏃 运动 (Sports)</div>
-                    <div class="interest-tag">🎲 桌游 (Board Games)</div>
-                    <div class="interest-tag">💻 编程 (Programming)</div>
-                    <div class="interest-tag">🥐 烘培 (Baking)</div>
-                </div>
-                <button style="margin-top: 20px; width: 100%;" onclick="alert('兴趣标签已更新，首页单词池已同步！')">保存设置</button>
+<div class="interest-tags">
+ <div class="interest-tag selected">🏗️ 建筑 (Architecture)</div>
+ <div class="interest-tag selected">🎮 电子竞技 (Esports)</div>
+ <div class="interest-tag selected">🎬 动漫 (Anime)</div>
+ <div class="interest-tag">🎵 音乐 (Music)</div>
+ <div class="interest-tag">🏃 运动 (Sports)</div>
+ <div class="interest-tag">🎲 桌游 (Board Games)</div>
+ <div class="interest-tag">💻 编程 (Programming)</div>
+ <div class="interest-tag">🥐 烘焙 (Baking)</div>
+ <div class="interest-tag">💼 商业 (Business)</div>
+ <div class="interest-tag">🔬 科技 (Technology)</div>
+ <div class="interest-tag">✈️ 旅行 (Travel)</div>
+ <div class="interest-tag">🍜 美食 (Food & Dining)</div>
+ <div class="interest-tag">🌿 自然 (Nature)</div>
+ <div class="interest-tag">🎨 艺术 (Art)</div>
+ <div class="interest-tag">📜 历史 (History)</div>
+ <div class="interest-tag">🏥 健康 (Health)</div>
+ <div class="interest-tag">🏛️ 社会 (Society)</div>
+ <div class="interest-tag">💰 金融 (Finance)</div>
+ <div class="interest-tag">⚖️ 法律 (Law)</div>
+ <div class="interest-tag">📚 教育 (Education)</div>
+ <div class="interest-tag">📺 媒体 (Media)</div>
+ <div class="interest-tag">🌍 环保 (Environment)</div>
+ </div>
+ <button id="save-prefs-btn" style="margin-top: 20px; width: 100%;">保存设置</button>
             </div>
         </section>
 
     </main>
 
-    <script>
-        // --- Mock 数据库（仅保留供首页每日推荐初始化使用） ---
-        const mockDB = {
-            "resilient": { word: "Resilient", pos: "adj.", cn: "有弹性的；能恢复活力的" },
-            "stimulate": { word: "Stimulate", pos: "v.", cn: "刺激；起促进作用" },
-            "intense": { word: "Intense", pos: "adj.", cn: "强烈的；紧张的" },
-            "rhythm": { word: "Rhythm", pos: "n.", cn: "节奏；韵律" },
-            "endurance": { word: "Endurance", pos: "n.", cn: "忍耐力；持久力" },
-            "strategy": { word: "Strategy", pos: "n.", cn: "策略；战略" },
-            "algorithm": { word: "Algorithm", pos: "n.", cn: "算法；运算法则" },
-            "pastry": { word: "Pastry", pos: "n.", cn: "糕点；油酥面团" },
-            "animation": { word: "Animation", pos: "n.", cn: "动画；活泼" }
+<script>
+        console.log("IELTS-Mate Script Loaded. Initializing...");
+
+        // ===================================================================
+        // 1. 全局错误捕获器 (我们的“黑匣子”)
+        // ===================================================================
+        window.onerror = function(message, source, lineno, colno, error) {
+            alert(`一个致命的脚本错误发生了，导致页面功能失效:\n\n错误信息: ${message}\n所在行: ${lineno}`);
+            console.error("捕获到全局错误:", { message, source, lineno, colno, error });
+            return true;
         };
 
-        function setDailyWord() {
-            const wordKeys = Object.keys(mockDB);
-            const today = new Date();
-            const dateString = today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate();
-            
-            let hash = 0;
-            for (let i = 0; i < dateString.length; i++) {
-                hash = dateString.charCodeAt(i) + ((hash << 5) - hash);
+        // ===================================================================
+        // 2. API 请求函数 (所有与后端的通信)
+        // ===================================================================
+        async function setDailyWord() {
+            console.log("Running setDailyWord()...");
+            try {
+                const response = await fetch('/api/daily_word');
+                if (!response.ok) throw new Error(`API returned status ${response.status}`);
+                const resData = await response.json();
+
+                if (resData && resData.data) {
+                    const wordData = resData.data;
+                    document.getElementById('home-word').innerText = wordData.word || 'N/A';
+                    document.getElementById('home-pos').innerText = wordData.pos || '-';
+                    document.getElementById('home-cn').innerText = wordData.cn || '-';
+                    console.log("Daily word updated successfully.");
+                } else {
+                    throw new Error('Invalid data format from /api/daily_word');
+                }
+            } catch (e) {
+                console.error("获取每日一词失败:", e);
+                document.getElementById('home-word').innerText = '错误';
+                document.getElementById('home-cn').innerText = '无法从后端加载数据';
             }
-            
-            const index = Math.abs(hash) % wordKeys.length;
-            const dailyKey = wordKeys[index];
-            
-            document.getElementById('home-word').innerText = mockDB[dailyKey].word;
-            document.getElementById('home-pos').innerText = mockDB[dailyKey].pos;
-            document.getElementById('home-cn').innerText = mockDB[dailyKey].cn;
-        }
-        
-        window.onload = setDailyWord;
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
         }
 
-        function handleEnter(e) { if (e.key === 'Enter') lookupWord(); }
-
-        // --- 真实的查单词逻辑 (对接 Python 后台) ---
-        // --- [升级版] 真实的查单词逻辑 (支持动态图片和视频) ---
         async function lookupWord() {
+            console.log("Running lookupWord()...");
             const input = document.getElementById('word-input').value.toLowerCase().trim();
             if (!input) return;
 
             const resultCard = document.getElementById('word-result-card');
             const searchBtn = document.getElementById('search-btn');
             
-            // 加上 Loading 状态
             searchBtn.innerText = "AI 检索中...";
             searchBtn.disabled = true;
 
             try {
-                // 向本地的 FastAPI 服务发送 GET 请求
-                const response = await fetch(`http://127.0.0.1:8000/api/lookup/${input}`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
+                const response = await fetch(`/api/lookup/${input}`);
+                if (!response.ok) throw new Error(`API returned status ${response.status}`);
                 const resData = await response.json();
                 const data = resData.data; 
 
-                // 1. 渲染文字数据
                 document.getElementById('res-word').innerText = data.word;
                 document.getElementById('res-pos').innerText = data.pos;
                 document.getElementById('res-cn').innerText = data.cn;
+                document.getElementById('res-en-def').innerText = data.en_definition;
                 document.getElementById('res-context').innerText = "使用场景：" + data.context;
                 document.getElementById('res-example').innerText = "例句: " + data.example;
                 
-                // 2. 实现动态图片：利用 Unsplash API 根据 AI 生成的 'context' 关键词拉取图片
-                // 例如 data.context 为 "Architecture", URL 变为 source.unsplash.com/featured/?Architecture
-                const dynamicImgUrl = `https://source.unsplash.com/featured/?${encodeURIComponent(data.context)}`;
-                document.getElementById('res-img').src = dynamicImgUrl;
-
-                // 3. 实现视频：展示从后台传回的场景视频 URL
+                // 步骤 2: 智能渲染图片
+                const imgEl = document.getElementById('res-img');
+                if (data.image_url) {
+                    // 如果后端提供了AI生成的图片URL，则使用它
+                    imgEl.src = data.image_url;
+                } else {
+                    // 否则，激活备用的Unsplash API
+                    console.log("--> AI Image failed. Activating Unsplash fallback based on context:", data.context);
+                    const dynamicImgUrl = `https://source.unsplash.com/featured/?${encodeURIComponent(data.context)}`;
+                    imgEl.src = dynamicImgUrl;
+                }
+                
                 const videoEl = document.getElementById('res-video');
                 const videoSource = document.getElementById('res-video-src');
-                if (data.video_url) {
-                    videoSource.src = data.video_url;
-                    videoEl.load(); // 必须重新加载视频源
-                } else {
-                    // 如果万一没传视频链接，用通用的
-                    videoSource.src = "https://www.w3schools.com/html/mov_bbb.mp4";
-                    videoEl.load();
-                }
+                videoSource.src = data.video_url || "https://www.w3schools.com/html/mov_bbb.mp4";
+                videoEl.load();
 
                 resultCard.style.display = 'block';
                 console.log("数据来源:", resData.source); 
-
             } catch (error) {
-                console.error("请求失败:", error);
-                alert("无法连接到后台服务。请确保你的 Python 后台运行中！");
+                console.error("查单词请求失败:", error);
+                alert("无法连接到后台服务或解析数据出错。");
             } finally {
                 searchBtn.innerText = "翻译";
                 searchBtn.disabled = false;
             }
         }
-        // --- 真实的 AI 对话逻辑 (语音识别 + 对接后台) ---
-        let audioContext, analyser, microphone, animationId;
-        let isRecording = false;
-        
-        // 兼容不同的浏览器
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = SpeechRecognition ? new SpeechRecognition() : null;
-        if (recognition) {
-            recognition.lang = 'en-US'; 
-            recognition.interimResults = false; 
-        }
 
-        async function toggleRecording() {
-            if (!recognition) {
-                alert("当前浏览器不支持语音识别功能，请使用 Chrome 浏览器体验。");
-                return;
-            }
+        async function loadPreferences() {
+            console.log("Running loadPreferences()...");
+            try {
+                const res = await fetch('/api/preferences');
+                const data = await res.json();
+                const saved = data.selected_tags || [];
 
-            const btn = document.getElementById('mic-btn');
-            const status = document.getElementById('mic-status');
-            const dialogue = document.getElementById('ai-dialogue');
-
-            if (!isRecording) {
-                try {
-                    // 1. 获取麦克风流用于绘制波形图
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    analyser = audioContext.createAnalyser();
-                    microphone = audioContext.createMediaStreamSource(stream);
-                    microphone.connect(analyser);
-                    analyser.fftSize = 256;
-                    
-                    // 2. 启动浏览器原生的语音识别
-                    recognition.start();
-
-                    isRecording = true;
-                    btn.classList.add('recording');
-                    btn.innerText = "⏸";
-                    status.innerText = "正在倾听... (请用英语说话)";
-                    dialogue.style.display = "none";
-                    drawVisualizer();
-
-                    // 3. 监听到说话结束后的回调
-                    recognition.onresult = async (event) => {
-                        const userText = event.results[0][0].transcript;
-                        status.innerText = "识别成功！AI 考官正在思考回复...";
-                        
-                        // 结束录音 UI 状态
-                        isRecording = false;
-                        btn.classList.remove('recording');
-                        btn.innerText = "🎤";
-                        cancelAnimationFrame(animationId);
-
-                        try {
-                            // 将转换后的文本发送给本地 Python 后台
-                            const response = await fetch("http://127.0.0.1:8000/api/chat", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ user_message: userText })
-                            });
-                            
-                            const resData = await response.json();
-
-                            // 动态生成对话气泡
-                            dialogue.innerHTML = `
-                                <div class="chat-bubble" style="background: var(--primary-blue); color: #fff; margin-left: auto;">
-                                    <strong>You:</strong> ${userText}
-                                </div>
-                                <div class="chat-bubble ai-bubble">
-                                    <strong>AI 考官:</strong> ${resData.reply}
-                                </div>
-                            `;
-                            dialogue.style.display = "block";
-                            status.innerText = "点击麦克风继续对话";
-
-                        } catch (error) {
-                            console.error("对话接口请求失败:", error);
-                            status.innerText = "网络连接失败，请检查 Python 后台是否启动。";
-                        }
-                    };
-
-                    recognition.onerror = (event) => {
-                        console.error("语音识别错误:", event.error);
-                        status.innerText = "未听到声音，请重试。";
-                        isRecording = false;
-                        btn.classList.remove('recording');
-                        btn.innerText = "🎤";
-                        cancelAnimationFrame(animationId);
-                    };
-
-                } catch (err) {
-                    alert("无法访问麦克风，请检查浏览器权限设置: " + err);
-                }
-            } else {
-                // 手动点击停止
-                isRecording = false;
-                recognition.stop();
-                btn.classList.remove('recording');
-                btn.innerText = "🎤";
-                cancelAnimationFrame(animationId);
-                status.innerText = "已取消录音。";
+                document.querySelectorAll('.interest-tag').forEach(tag => {
+                    const tagText = tag.innerText.split(' ').slice(1).join(' ').replace(/\(.*\)/, '').trim();
+                    tag.classList.toggle('selected', saved.includes(tagText));
+                });
+                console.log("Preferences loaded.");
+            } catch (e) {
+                console.error('无法加载偏好设置:', e);
             }
         }
 
-        function drawVisualizer() {
-            if (!isRecording) return;
-            const canvas = document.getElementById('visualizer');
-            const canvasCtx = canvas.getContext('2d');
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
+        async function savePreferences() {
+            console.log("Running savePreferences()...");
+            const btn = document.getElementById('save-prefs-btn');
+            const selectedTags = Array.from(document.querySelectorAll('.interest-tag.selected'))
+                .map(el => el.innerText.split(' ').slice(1).join(' ').replace(/\(.*\)/, '').trim());
+
+            btn.innerText = '保存中...';
+            btn.disabled = true;
+
+            try {
+                await fetch('/api/preferences', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ selected_tags: selectedTags })
+                });
+                btn.innerText = '已保存 ✓';
+                // 刷新每日一词以应用新偏好
+                await setDailyWord();
+            } catch (e) {
+                console.error("保存偏好失败:", e);
+                btn.innerText = '保存失败';
+            } finally {
+                setTimeout(() => { btn.innerText = '保存设置'; btn.disabled = false; }, 1500);
+            }
+        }
+
+        // ===================================================================
+        // 3. 事件绑定与初始化
+        // ===================================================================
+        function switchTab(tabId, event) {
+            console.log(`Switching to tab: ${tabId}`);
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             
-            canvas.width = canvas.offsetWidth * 2;
-            canvas.height = canvas.offsetHeight * 2;
-            canvasCtx.scale(2, 2);
-
-            function draw() {
-                animationId = requestAnimationFrame(draw);
-                analyser.getByteFrequencyData(dataArray);
-                
-                canvasCtx.fillStyle = '#fafafa';
-                canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                const barWidth = (canvas.width / 2 / bufferLength) * 2.5;
-                let barHeight;
-                let x = 0;
-                
-                for(let i = 0; i < bufferLength; i++) {
-                    barHeight = dataArray[i] / 2.5;
-                    canvasCtx.fillStyle = '#0071e3';
-                    canvasCtx.beginPath();
-                    canvasCtx.roundRect(x, 50 - barHeight/2, barWidth - 2, barHeight > 4 ? barHeight : 4, 4);
-                    canvasCtx.fill();
-                    x += barWidth + 2;
-                }
+            document.getElementById(tabId).classList.add('active');
+            if(event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
             }
-            draw();
+        }
+        
+        function handleEnter(e) { 
+            if (e.key === 'Enter') lookupWord(); 
         }
 
-        // 标签点击交互
-        document.querySelectorAll('.interest-tag').forEach(tag => {
-            tag.addEventListener('click', function() {
-                this.classList.toggle('selected');
+        // 应用程序主入口
+        async function initializeApp() {
+            console.log("initializeApp() running...");
+
+            // 绑定导航按钮
+            document.querySelector('[onclick*="home"]').onclick = (e) => switchTab('home', e);
+            document.querySelector('[onclick*="search"]').onclick = (e) => switchTab('search', e);
+            document.querySelector('[onclick*="ai-chat"]').onclick = (e) => switchTab('ai-chat', e);
+            document.querySelector('[onclick*="personalize"]').onclick = (e) => switchTab('personalize', e);
+            
+            // 绑定其他交互
+            document.querySelectorAll('.interest-tag').forEach(tag => {
+                tag.addEventListener('click', function() {
+                    this.classList.toggle('selected');
+                });
             });
-        });
+            document.getElementById('save-prefs-btn').addEventListener('click', savePreferences);
+            
+            // 加载初始数据
+            await loadPreferences();
+            await setDailyWord();
+            
+            console.log("Initialization complete. App is ready.");
+        }
+
+        // 当 HTML 文档加载完成后，启动我们的应用
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
     </script>
-</body>
 </html>
