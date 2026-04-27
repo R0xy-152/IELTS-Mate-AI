@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS-Mate | AI Vocabulary Helper</title>
+    <style>
+        :root {
+            --bg-color: #f5f5f7;
+            --text-main: #1d1d1f;
+            --text-secondary: #86868b;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --primary-blue: #0071e3;
+            --border-radius: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            padding-left: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: #fff;
+            color: var(--primary-blue);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 60px;
+            overflow-y: auto;
+        }
+
+        .section {
+            display: none;
+            max-width: 900px;
+            margin: 0 auto;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 40px;
+            font-weight: 600;
+            letter-spacing: -1px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255,255,255,0.5);
+            margin-bottom: 30px;
+        }
+
+        .today-word-display { text-align: center; padding: 60px 20px; }
+        .today-word-display h2 { font-size: 64px; color: var(--primary-blue); margin-bottom: 10px; }
+        .today-word-display .pos { color: var(--text-secondary); font-size: 18px; margin-bottom: 20px; display: block; }
+        .today-word-display .cn { font-size: 24px; font-weight: 500; }
+
+        .search-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 16px 24px;
+            border-radius: 16px;
+            border: 1px solid #ddd;
+            font-size: 18px;
+            outline: none;
+            background: #fff;
+            transition: border 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+        }
+
+        button {
+            padding: 16px 32px;
+            border-radius: 16px;
+            border: none;
+            background: var(--primary-blue);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        button:hover  { background: #005bb5; transform: scale(0.98); }
+        button:disabled { background: #a1c9f2; cursor: not-allowed; transform: none; }
+
+        .word-result { display: none; }
+
+        .tag-pill {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #eef1f6;
+            color: #4a5568;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 15px;
+        }
+
+        .interest-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .interest-tag {
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .interest-tag.selected {
+            background: var(--primary-blue);
+            color: #fff;
+            border-color: var(--primary-blue);
+        }
+
+        .placeholder-note {
+            margin-top: 20px;
+            padding: 15px 20px;
+            background: #fff8e1;
+            border-radius: 12px;
+            color: #8a6d3b;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="logo">IELTS-Mate.</div>
+        <div class="nav-links">
+            <div class="nav-item active" data-tab="home">首页 (Home)</div>
+            <div class="nav-item" data-tab="search">查单词 (Lookup)</div>
+            <div class="nav-item" data-tab="personalize">个性化 (Preferences)</div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+
+        <section id="home" class="section active">
+            <h1>今日专属词汇</h1>
+            <div class="card today-word-display">
+                <p style="color: #86868b; margin-bottom: 20px;">基于你选择的兴趣标签智能推荐</p>
+                <h2 id="home-word">Loading...</h2>
+                <span class="pos" id="home-pos">-</span>
+                <div class="cn" id="home-cn">-</div>
+                <p style="margin-top: 20px; font-size: 14px; color: var(--primary-blue);">💡 去 “查单词” 模块深入学习它的语境</p>
+            </div>
+        </section>
+
+        <section id="search" class="section">
+            <h1>查单词</h1>
+            <div class="search-box">
+                <input type="text" id="word-input" placeholder="输入你想查询的任何单词 (例如: sustainability)">
+                <button id="search-btn">翻译</button>
+            </div>
+
+            <div class="card word-result" id="word-result-card">
+                <div id="res-tags-container" style="margin-bottom: 10px;"></div>
+                <h2 style="font-size: 48px; margin-bottom: 5px;" id="res-word">Word</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;" id="res-pos">pos.</p>
+                <h3 style="margin-bottom: 15px;" id="res-cn">中文含义</h3>
+                <p style="font-style: italic; color: var(--text-secondary); margin-bottom: 15px;" id="res-en-def">English definition...</p>
+                <p style="line-height: 1.6; font-size: 16px; background: #fafafa; padding: 15px; border-radius: 12px;" id="res-example">Example...</p>
+            </div>
+        </section>
+
+        <section id="personalize" class="section">
+            <h1>定制你的学习流</h1>
+            <div class="card">
+                <h3 style="margin-bottom: 20px;">选择你的兴趣标签</h3>
+                <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 15px;">系统会优先推荐与你的兴趣相关的雅思词汇。</p>
+                <div class="interest-tags">
+                    <div class="interest-tag" data-tag="Architecture">🏗️ 建筑 (Architecture)</div>
+                    <div class="interest-tag" data-tag="Esports">🎮 电子竞技 (Esports)</div>
+                    <div class="interest-tag" data-tag="Anime">🎬 动漫 (Anime)</div>
+                    <div class="interest-tag" data-tag="Music">🎵 音乐 (Music)</div>
+                    <div class="interest-tag" data-tag="Sports">🏃 运动 (Sports)</div>
+                    <div class="interest-tag" data-tag="Board Games">🎲 桌游 (Board Games)</div>
+                    <div class="interest-tag" data-tag="Programming">💻 编程 (Programming)</div>
+                    <div class="interest-tag" data-tag="Baking">🥐 烘焙 (Baking)</div>
+                    <div class="interest-tag" data-tag="Business">💼 商业 (Business)</div>
+                    <div class="interest-tag" data-tag="Technology">🔬 科技 (Technology)</div>
+                    <div class="interest-tag" data-tag="Travel">✈️ 旅行 (Travel)</div>
+                    <div class="interest-tag" data-tag="Food">🍜 美食 (Food)</div>
+                    <div class="interest-tag" data-tag="Nature">🌿 自然 (Nature)</div>
+                    <div class="interest-tag" data-tag="Art">🎨 艺术 (Art)</div>
+                    <div class="interest-tag" data-tag="History">📜 历史 (History)</div>
+                    <div class="interest-tag" data-tag="Health">🏥 健康 (Health)</div>
+                    <div class="interest-tag" data-tag="Society">🏛️ 社会 (Society)</div>
+                    <div class="interest-tag" data-tag="Finance">💰 金融 (Finance)</div>
+                    <div class="interest-tag" data-tag="Law">⚖️ 法律 (Law)</div>
+                    <div class="interest-tag" data-tag="Education">📚 教育 (Education)</div>
+                    <div class="interest-tag" data-tag="Media">📺 媒体 (Media)</div>
+                    <div class="interest-tag" data-tag="Environment">🌍 环保 (Environment)</div>
+                </div>
+                <button id="save-prefs-btn" style="margin-top: 20px; width: 100%;">保存设置</button>
+            </div>
+        </section>
+
+    </main>
+
+<script>
+    'use strict';
+
+    window.onerror = function (message, source, lineno) {
+        console.error('[Global error]', { message, source, lineno });
+        return true;
+    };
+
+    async function setDailyWord() {
+        try {
+            const res = await fetch('/api/daily_word');
+            if (!res.ok) throw new Error(`status ${res.status}`);
+            const body = await res.json();
+            const w = body.data || {};
+            document.getElementById('home-word').innerText = w.word || 'N/A';
+            document.getElementById('home-pos').innerText  = w.pos  || '-';
+            document.getElementById('home-cn').innerText   = w.cn   || '-';
+        } catch (e) {
+            console.error('daily_word failed:', e);
+            document.getElementById('home-word').innerText = '错误';
+            document.getElementById('home-cn').innerText   = '无法从后端加载数据';
+        }
+    }
+
+    async function lookupWord() {
+        const input = document.getElementById('word-input').value.trim().toLowerCase();
+        if (!input) return;
+
+        const card = document.getElementById('word-result-card');
+        const btn  = document.getElementById('search-btn');
+        btn.innerText = 'AI 检索中...';
+        btn.disabled  = true;
+
+        try {
+            const res = await fetch(`/api/lookup/${encodeURIComponent(input)}`);
+            if (!res.ok) throw new Error(`status ${res.status}`);
+            const body = await res.json();
+            const data = body.data || {};
+
+            document.getElementById('res-word').innerText    = data.word || '-';
+            document.getElementById('res-pos').innerText     = data.pos || '-';
+            document.getElementById('res-cn').innerText      = data.cn || '-';
+            document.getElementById('res-en-def').innerText  = data.en_definition || '';
+            document.getElementById('res-example').innerText = '例句: ' + (data.example || '-');
+
+            const tagsBox = document.getElementById('res-tags-container');
+            tagsBox.innerHTML = '';
+            (data.tags || []).forEach(t => {
+                const pill = document.createElement('span');
+                pill.className = 'tag-pill';
+                pill.innerText = t;
+                tagsBox.appendChild(pill);
+            });
+
+            card.style.display = 'block';
+            console.log('source:', body.source);
+        } catch (e) {
+            console.error('lookup failed:', e);
+            alert('查询失败: ' + e.message);
+        } finally {
+            btn.innerText = '翻译';
+            btn.disabled  = false;
+        }
+    }
+
+    async function loadPreferences() {
+        try {
+            const res = await fetch('/api/preferences');
+            if (!res.ok) return;
+            const body = await res.json();
+            const saved = new Set(body.selected_tags || []);
+            document.querySelectorAll('.interest-tag').forEach(el => {
+                el.classList.toggle('selected', saved.has(el.dataset.tag));
+            });
+        } catch (e) {
+            console.error('loadPreferences failed:', e);
+        }
+    }
+
+    async function savePreferences() {
+        const btn = document.getElementById('save-prefs-btn');
+        const tags = Array.from(document.querySelectorAll('.interest-tag.selected'))
+            .map(el => el.dataset.tag);
+
+        btn.innerText = '保存中...';
+        btn.disabled  = true;
+        try {
+            const res = await fetch('/api/preferences', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ selected_tags: tags }),
+            });
+            if (!res.ok) throw new Error(`status ${res.status}`);
+            btn.innerText = '已保存 ✓';
+            await setDailyWord();
+        } catch (e) {
+            console.error('save failed:', e);
+            btn.innerText = '保存失败';
+        } finally {
+            setTimeout(() => { btn.innerText = '保存设置'; btn.disabled = false; }, 1500);
+        }
+    }
+
+    function switchTab(tabId, evt) {
+        document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        if (evt && evt.currentTarget) evt.currentTarget.classList.add('active');
+    }
+
+    function initializeApp() {
+        document.querySelectorAll('.nav-item').forEach(el => {
+            el.addEventListener('click', e => switchTab(el.dataset.tab, e));
+        });
+        document.querySelectorAll('.interest-tag').forEach(el => {
+            el.addEventListener('click', () => el.classList.toggle('selected'));
+        });
+        document.getElementById('save-prefs-btn').addEventListener('click', savePreferences);
+        document.getElementById('search-btn').addEventListener('click', lookupWord);
+        document.getElementById('word-input').addEventListener('keypress', e => {
+            if (e.key === 'Enter') lookupWord();
+        });
+
+        loadPreferences().then(setDailyWord);
+    }
+
+    document.addEventListener('DOMContentLoaded', initializeApp);
+</script>
+</body>
+</html>
