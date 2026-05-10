@@ -4,10 +4,10 @@ import json
 import main
 
 
-def test_get_preferences_empty_returns_empty_list(client):
+def test_get_preferences_empty_returns_default_tags(client):
     r = client.get("/api/preferences")
     assert r.status_code == 200
-    assert r.json() == {"selected_tags": []}
+    assert r.json() == {"selected_tags": main.DEFAULT_INTEREST_TAGS}
 
 
 def test_save_then_get_preferences_round_trip(client):
@@ -17,6 +17,24 @@ def test_save_then_get_preferences_round_trip(client):
 
     r = client.get("/api/preferences")
     assert sorted(r.json()["selected_tags"]) == ["Music", "Sports"]
+
+
+def test_get_preferences_tolerates_corrupt_json(client, db_session):
+    db_session.add(main.UserPreference(selected_tags="not-json"))
+    db_session.commit()
+
+    r = client.get("/api/preferences")
+    assert r.status_code == 200
+    assert r.json() == {"selected_tags": main.DEFAULT_INTEREST_TAGS}
+
+
+def test_save_preferences_dedupes_tags(client):
+    r = client.post(
+        "/api/preferences",
+        json={"selected_tags": ["Music", "Music", "Sports"]},
+    )
+    assert r.status_code == 200
+    assert r.json()["selected_tags"] == ["Music", "Sports"]
 
 
 def test_save_preferences_overwrites_previous(client):

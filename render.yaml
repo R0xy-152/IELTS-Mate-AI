@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: ielts-mate-ai
+    runtime: python
+    plan: free
+    buildCommand: pip install -e .
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: GEMINI_IMAGE_MODEL
+        value: gemini-2.5-flash-image
+      - key: IMAGE_DAILY_LIMIT_PER_IP
+        value: "1"
+      - key: RATE_LIMIT_SALT
+        generateValue: true
+      - key: CORS_ORIGINS
+        sync: false
