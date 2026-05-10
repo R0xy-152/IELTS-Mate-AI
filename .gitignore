@@ -1,0 +1,30 @@
+# Secrets / local config
+.env
+
+# SQLite databases
+*.db
+*.sqlite3
+
+# Python build artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+static/generated_images/*
+!static/generated_images/.gitkeep
+
+# Virtual envs
+venv/
+.venv/
+env/
+
+# Tooling
+.pytest_cache/
+.coverage
+htmlcov/
+HANDOFF_TO_CLAUDE.md
+
+# Editors
+.idea/
+.vscode/
+*.swp
+.DS_Store

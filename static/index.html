@@ -184,6 +184,19 @@
             border-color: var(--primary-blue);
         }
 
+        .word-image-container {
+            display: none; /* Hidden by default */
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .word-image-container img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+            object-fit: cover;
+        }
+
         .placeholder-note {
             margin-top: 20px;
             padding: 15px 20px;
@@ -193,6 +206,312 @@
             font-size: 14px;
             line-height: 1.5;
         }
+
+        .image-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .image-actions-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .image-actions button {
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        .image-status {
+            color: var(--text-secondary);
+            font-size: 13px;
+            min-height: 18px;
+        }
+
+        .image-provider-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0.7;
+        }
+
+        /* ── Segmented size control ── */
+        .size-selector {
+            display: inline-flex;
+            background: #eef1f6;
+            border-radius: 10px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .size-option {
+            padding: 6px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            border: none;
+            background: transparent;
+            outline: none;
+        }
+
+        .size-option.active {
+            background: #fff;
+            color: var(--primary-blue);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+
+/* --- Ring Loader --- */
+.loader-ring {
+    --size: 20px;
+    --color: #fff;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    border: 2px solid;
+    border-color: var(--color) var(--color) var(--color) transparent;
+    animation: loader-ring-anim 1.2s linear infinite;
+    display: none; /* Hidden by default */
+}
+@keyframes loader-ring-anim {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* --- Infinity Loader --- */
+.loader-infinity {
+    --color: #0071e3;
+    --size: 60px;
+    width: var(--size);
+    height: calc(var(--size) * 0.4);
+    position: relative;
+    display: block; /* Shown by default */
+}
+.loader-infinity::before,
+.loader-infinity::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: calc(var(--size) * 0.5);
+    height: calc(var(--size) * 0.4);
+    border: 4px solid var(--color);
+    border-radius: 50%;
+    animation: loader-infinity-anim 2s infinite;
+}
+.loader-infinity::before {
+    left: 0;
+    animation-delay: -1s;
+}
+.loader-infinity::after {
+    right: 0;
+}
+@keyframes loader-infinity-anim {
+    0%, 100% { transform: rotate(0); }
+    50% { transform: rotate(180deg); }
+}
+
+/* --- Button-specific loading styles --- */
+button.loading > span {
+    display: none;
+}
+button.loading > .loader-ring {
+    display: inline-block;
+}
+    
+/* --- Speaking examiner chat --- */
+.chat-message {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+}
+.chat-message.examiner { align-items: flex-start; }
+.chat-message.user      { align-items: flex-end; }
+
+.chat-bubble {
+    max-width: 75%;
+    padding: 12px 18px;
+    border-radius: 16px;
+    font-size: 15px;
+    line-height: 1.55;
+    word-break: break-word;
+}
+.chat-message.examiner .chat-bubble {
+    background: #f0f4f8;
+    color: var(--text-main);
+    border-bottom-left-radius: 4px;
+}
+.chat-message.user .chat-bubble {
+    background: var(--primary-blue);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-role {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    padding: 0 4px;
+}
+
+.typing-indicator {
+    display: none;
+    color: var(--text-secondary);
+    font-size: 14px;
+    padding: 8px 16px;
+    margin-bottom: 12px;
+}
+.typing-indicator.active { display: block; }
+.typing-indicator::after {
+    content: '...';
+    animation: typing-dots 1.4s steps(3, end) infinite;
+}
+@keyframes typing-dots {
+    0%, 100% { content: '.'; }
+    33% { content: '..'; }
+    66% { content: '...'; }
+}
+
+/* --- Evaluation card --- */
+.eval-score-big {
+    text-align: center;
+    margin-bottom: 24px;
+}
+.eval-score-number {
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--primary-blue);
+    line-height: 1;
+}
+.eval-score-label {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.eval-criteria {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+@media (max-width: 640px) {
+    .eval-criteria { grid-template-columns: 1fr; }
+}
+.eval-criterion {
+    background: #fafafa;
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+}
+.eval-criterion .score {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary-blue);
+}
+.eval-criterion .label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 4px 0 8px;
+}
+.eval-criterion .comment {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+}
+
+.eval-section {
+    margin-bottom: 18px;
+}
+.eval-section h4 {
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+.eval-section ul {
+    padding-left: 20px;
+    color: #444;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+    
+/* --- Voice controls --- */
+.mic-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    flex-shrink: 0;
+}
+.mic-btn:hover { background: #f5f5f7; }
+.mic-btn.recording {
+    background: #e74c3c;
+    border-color: #e74c3c;
+    color: #fff;
+    animation: mic-pulse 1.5s infinite;
+}
+.mic-btn.unsupported {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+@keyframes mic-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(231, 76, 60, 0); }
+}
+
+.recording-label {
+    display: none;
+    font-size: 12px;
+    color: #e74c3c;
+    font-weight: 500;
+}
+.recording-label.active { display: inline; }
+
+.speaker-btn {
+    background: none;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+.speaker-btn:hover { opacity: 1; background: rgba(0,0,0,0.05); }
+
+.auto-speak-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+}
+.auto-speak-toggle input { cursor: pointer; }
+
+.voice-unsupported {
+    display: none;
+    font-size: 12px;
+    color: #e67e22;
+    margin-top: 8px;
+}
+.voice-unsupported.show { display: block; }
+
     </style>
 </head>
 <body>
@@ -203,6 +522,7 @@
             <div class="nav-item active" data-tab="home">首页 (Home)</div>
             <div class="nav-item" data-tab="search">查单词 (Lookup)</div>
             <div class="nav-item" data-tab="personalize">个性化 (Preferences)</div>
+            <div class="nav-item" data-tab="speaking">口语练习 (Speaking)</div>
         </div>
     </nav>
 
@@ -212,9 +532,12 @@
             <h1>今日专属词汇</h1>
             <div class="card today-word-display">
                 <p style="color: #86868b; margin-bottom: 20px;">基于你选择的兴趣标签智能推荐</p>
-                <h2 id="home-word">Loading...</h2>
-                <span class="pos" id="home-pos">-</span>
-                <div class="cn" id="home-cn">-</div>
+                <div class="loader-infinity" id="home-loader"></div>
+                <div id="home-content-wrapper" style="display: none;">
+                    <h2 id="home-word">Word</h2>
+                    <span class="pos" id="home-pos">-</span>
+                    <div class="cn" id="home-cn">-</div>
+                </div>
                 <p style="margin-top: 20px; font-size: 14px; color: var(--primary-blue);">💡 去 “查单词” 模块深入学习它的语境</p>
             </div>
         </section>
@@ -223,10 +546,25 @@
             <h1>查单词</h1>
             <div class="search-box">
                 <input type="text" id="word-input" placeholder="输入你想查询的任何单词 (例如: sustainability)">
-                <button id="search-btn">翻译</button>
+                <button id="search-btn"><span>翻译</span><div class="loader-ring"></div></button>
             </div>
 
             <div class="card word-result" id="word-result-card">
+                <div class="word-image-container" id="res-image-container">
+                    <img src="" alt="Word illustration" id="res-image">
+                </div>
+                <div class="image-actions">
+                    <div class="size-selector" id="size-selector" style="display: none;">
+                        <button class="size-option active" data-size="small">小 (512)</button>
+                        <button class="size-option" data-size="medium">中 (768)</button>
+                        <button class="size-option" data-size="large">大 (1024)</button>
+                    </div>
+                    <div class="image-actions-row">
+                        <button id="image-btn" type="button"><span>生成图片</span><div class="loader-ring"></div></button>
+                        <span class="image-status" id="image-status"></span>
+                    </div>
+                    <span class="image-provider-label" id="image-provider-label" style="display: none;"></span>
+                </div>
                 <div id="res-tags-container" style="margin-bottom: 10px;"></div>
                 <h2 style="font-size: 48px; margin-bottom: 5px;" id="res-word">Word</h2>
                 <p style="color: var(--text-secondary); margin-bottom: 20px;" id="res-pos">pos.</p>
@@ -265,14 +603,70 @@
                     <div class="interest-tag" data-tag="Media">📺 媒体 (Media)</div>
                     <div class="interest-tag" data-tag="Environment">🌍 环保 (Environment)</div>
                 </div>
-                <button id="save-prefs-btn" style="margin-top: 20px; width: 100%;">保存设置</button>
+                <button id="save-prefs-btn" style="margin-top: 20px; width: 100%;"><span>保存设置</span><div class="loader-ring"></div></button>
+            </div>
+        </section>
+
+        <section id="speaking" class="section">
+            <h1>雅思口语练习</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 30px;">模拟 IELTS Part 1 对话，AI 考官会就常见话题对你进行提问，结束后给出评分反馈。</p>
+
+            <!-- Start screen -->
+            <div class="card speaking-start" id="speaking-start">
+                <div style="text-align: center; padding: 40px 20px;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">🎙️</div>
+                    <h3 style="font-size: 22px; margin-bottom: 12px;">准备开始口语练习</h3>
+                    <p style="color: var(--text-secondary); font-size: 15px; line-height: 1.6; max-width: 500px; margin: 0 auto 30px;">
+                        考官会随机选择一个话题（家乡、工作、爱好等），用英文与你进行 5-8 轮对话。<br>
+                        你可以随时点击"结束练习"获取评分反馈。
+                    </p>
+                    <button id="speaking-start-btn"><span>开始练习</span><div class="loader-ring"></div></button>
+                    <p id="speaking-key-missing" style="color: #c0392b; font-size: 14px; margin-top: 16px; display: none;">
+                        ⚠️ 请先在 .env 中配置 GEMINI_API_KEY
+                    </p>
+                </div>
+            </div>
+
+            <!-- Chat area -->
+            <div class="card" id="speaking-chat" style="display: none;">
+                <div id="speaking-topic-label" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                    <span>话题：<span id="speaking-topic-name"></span></span>
+                    <label class="auto-speak-toggle" id="auto-speak-toggle">
+                        <input type="checkbox" id="auto-speak-checkbox"> 自动朗读考官消息
+                    </label>
+                </div>
+                <div id="speaking-messages" style="max-height: 420px; overflow-y: auto; padding-right: 8px;"></div>
+                <div class="typing-indicator" id="speaking-typing">Examiner is typing</div>
+                <div style="display: flex; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #eee; align-items: center; flex-wrap: wrap;">
+                    <button class="mic-btn" id="speaking-mic-btn" title="语音输入 (Voice input)">🎤</button>
+                    <span class="recording-label" id="speaking-recording-label">正在聆听...</span>
+                    <input type="text" id="speaking-input" placeholder="输入你的回答..." style="flex: 1; padding: 12px 18px; border-radius: 12px; border: 1px solid #ddd; font-size: 15px; outline: none; min-width: 180px;">
+                    <button id="speaking-send-btn" style="padding: 12px 20px;"><span>发送</span><div class="loader-ring"></div></button>
+                    <button id="speaking-end-btn" style="background: #e74c3c; padding: 12px 20px;"><span>结束练习</span></button>
+                </div>
+                <div class="voice-unsupported" id="speaking-voice-unsupported">
+                    ⚠️ 你的浏览器不支持语音识别，请使用 Chrome 或 Edge。
+                </div>
+            </div>
+
+            <!-- Evaluation card -->
+            <div class="card" id="speaking-evaluation" style="display: none;">
+                <h3 style="margin-bottom: 20px;">📊 评分报告</h3>
+                <div id="speaking-eval-content"></div>
+                <div style="text-align: center; margin-top: 24px;">
+                    <button id="speaking-retry-btn"><span>再来一次</span><div class="loader-ring"></div></button>
+                </div>
             </div>
         </section>
 
     </main>
 
-<script>
-    'use strict';
+	<script>
+	    'use strict';
+	    let currentLookupWord = '';
+	let currentImageSize = 'small';
+	let imageWasGenerated = false;
+
 
     window.onerror = function (message, source, lineno) {
         console.error('[Global error]', { message, source, lineno });
@@ -288,10 +682,16 @@
             document.getElementById('home-word').innerText = w.word || 'N/A';
             document.getElementById('home-pos').innerText  = w.pos  || '-';
             document.getElementById('home-cn').innerText   = w.cn   || '-';
+
+            document.getElementById('home-loader').style.display = 'none';
+            document.getElementById('home-content-wrapper').style.display = 'block';
         } catch (e) {
             console.error('daily_word failed:', e);
             document.getElementById('home-word').innerText = '错误';
             document.getElementById('home-cn').innerText   = '无法从后端加载数据';
+
+            document.getElementById('home-loader').style.display = 'none';
+            document.getElementById('home-content-wrapper').style.display = 'block';
         }
     }
 
@@ -301,20 +701,37 @@
 
         const card = document.getElementById('word-result-card');
         const btn  = document.getElementById('search-btn');
-        btn.innerText = 'AI 检索中...';
+        btn.classList.add('loading');
         btn.disabled  = true;
 
         try {
             const res = await fetch(`/api/lookup/${encodeURIComponent(input)}`);
             if (!res.ok) throw new Error(`status ${res.status}`);
-            const body = await res.json();
-            const data = body.data || {};
+	            const body = await res.json();
+	            const data = body.data || {};
+	            currentLookupWord = data.word || input;
 
-            document.getElementById('res-word').innerText    = data.word || '-';
-            document.getElementById('res-pos').innerText     = data.pos || '-';
-            document.getElementById('res-cn').innerText      = data.cn || '-';
-            document.getElementById('res-en-def').innerText  = data.en_definition || '';
-            document.getElementById('res-example').innerText = '例句: ' + (data.example || '-');
+	            document.getElementById('res-word').innerText    = data.word || '-';
+	            document.getElementById('res-pos').innerText     = data.pos || '-';
+	            document.getElementById('res-cn').innerText      = data.cn || '-';
+	            document.getElementById('res-en-def').innerText  = data.en_definition || '';
+	            document.getElementById('res-example').innerText = '例句: ' + (data.example || '暂无例句');
+	            document.getElementById('image-status').innerText = '';
+	            document.getElementById('image-btn').disabled = false;
+	            document.getElementById('image-btn').querySelector('span').innerText = '生成图片';
+	            document.getElementById('image-status').innerText = '';
+	            document.getElementById('image-provider-label').style.display = 'none';
+	            document.getElementById('size-selector').style.display = 'inline-flex';
+	            imageWasGenerated = false;
+
+            const imageContainer = document.getElementById('res-image-container');
+            const imageEl = document.getElementById('res-image');
+            if (data.image_url) {
+                imageEl.src = data.image_url;
+                imageContainer.style.display = 'block';
+            } else {
+                imageContainer.style.display = 'none';
+            }
 
             const tagsBox = document.getElementById('res-tags-container');
             tagsBox.innerHTML = '';
@@ -331,10 +748,56 @@
             console.error('lookup failed:', e);
             alert('查询失败: ' + e.message);
         } finally {
-            btn.innerText = '翻译';
+            btn.classList.remove('loading');
             btn.disabled  = false;
-        }
-    }
+	        }
+	    }
+
+	    async function generateImage() {
+	        if (!currentLookupWord) return;
+
+	        const btn = document.getElementById('image-btn');
+	        const status = document.getElementById('image-status');
+	        const providerLabel = document.getElementById('image-provider-label');
+	        const imageContainer = document.getElementById('res-image-container');
+	        const imageEl = document.getElementById('res-image');
+
+	        btn.disabled = true;
+	        btn.classList.add('loading');
+	        status.innerText = '正在生成图片...';
+	        providerLabel.style.display = 'none';
+
+	        try {
+	            const params = new URLSearchParams({ size: currentImageSize });
+	            const res = await fetch(`/api/generate_image/${encodeURIComponent(currentLookupWord)}?${params}`, {
+	                method: 'POST',
+	            });
+	            if (!res.ok) throw new Error(`status ${res.status}`);
+	            const body = await res.json();
+	            const data = body.data || {};
+	            if (data.image_url) {
+	                imageEl.src = data.image_url;
+	                imageContainer.style.display = 'block';
+	                imageWasGenerated = true;
+	                btn.querySelector('span').innerText = '重新生成';
+	                if (body.provider) {
+	                    status.innerText = body.provider === 'local' ? '已生成本地示意图' : '图片已生成';
+	                    providerLabel.innerText = 'via ' + body.provider;
+	                    providerLabel.style.display = 'block';
+	                } else {
+	                    status.innerText = '图片已生成';
+	                }
+	            } else {
+	                status.innerText = '暂无图片';
+	            }
+	        } catch (e) {
+	            console.error('image generation failed:', e);
+	            status.innerText = '生成失败，请重试';
+	        } finally {
+	            btn.classList.remove('loading');
+	            btn.disabled = false;
+	        }
+	    }
 
     async function loadPreferences() {
         try {
@@ -349,14 +812,14 @@
             console.error('loadPreferences failed:', e);
         }
     }
-
     async function savePreferences() {
         const btn = document.getElementById('save-prefs-btn');
         const tags = Array.from(document.querySelectorAll('.interest-tag.selected'))
             .map(el => el.dataset.tag);
 
-        btn.innerText = '保存中...';
         btn.disabled  = true;
+        btn.classList.add('loading');
+
         try {
             const res = await fetch('/api/preferences', {
                 method: 'POST',
@@ -364,13 +827,23 @@
                 body: JSON.stringify({ selected_tags: tags }),
             });
             if (!res.ok) throw new Error(`status ${res.status}`);
-            btn.innerText = '已保存 ✓';
+            
+            btn.classList.remove('loading');
+            const textSpan = btn.querySelector('span');
+            if(textSpan) textSpan.innerText = '已保存 ✓';
+            
             await setDailyWord();
         } catch (e) {
             console.error('save failed:', e);
-            btn.innerText = '保存失败';
+            btn.classList.remove('loading');
+            const textSpan = btn.querySelector('span');
+            if(textSpan) textSpan.innerText = '保存失败';
         } finally {
-            setTimeout(() => { btn.innerText = '保存设置'; btn.disabled = false; }, 1500);
+            setTimeout(() => { 
+                const textSpan = btn.querySelector('span');
+                if(textSpan) textSpan.innerText = '保存设置';
+                btn.disabled = false; 
+            }, 1500);
         }
     }
 
@@ -381,6 +854,388 @@
         if (evt && evt.currentTarget) evt.currentTarget.classList.add('active');
     }
 
+
+    /* ── Speaking Examiner ── */
+    let speakingSessionId = null;
+    let speakingActive = false;
+    /* ── Voice Input (MediaRecorder + backend STT) & Output (TTS) ── */
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let audioStream = null;
+    let isRecording = false;
+    let autoSpeak = false;
+    let selectedVoice = null;
+    let recordingTimer = null;
+    let recordingSeconds = 0;
+
+    function initVoice() {
+        const micBtn = document.getElementById('speaking-mic-btn');
+        const unsupported = document.getElementById('speaking-voice-unsupported');
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            micBtn.classList.add('unsupported');
+            micBtn.title = 'Microphone access not supported in this browser';
+            unsupported.classList.add('show');
+            return;
+        }
+
+        // Pre-load a good English voice for TTS
+        const voices = speechSynthesis.getVoices();
+        selectedVoice = voices.find(v => v.lang === 'en-US' && v.name.includes('Samantha'))
+            || voices.find(v => v.lang === 'en-US')
+            || voices.find(v => v.lang.startsWith('en'));
+
+        speechSynthesis.onvoiceschanged = () => {
+            const updated = speechSynthesis.getVoices();
+            selectedVoice = updated.find(v => v.lang === 'en-US' && v.name.includes('Samantha'))
+                || updated.find(v => v.lang === 'en-US')
+                || updated.find(v => v.lang.startsWith('en'));
+        };
+    }
+
+    async function toggleMic() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+        if (isRecording) {
+            stopRecording();
+        } else {
+            await startRecording();
+        }
+    }
+
+    async function startRecording() {
+        const micBtn = document.getElementById('speaking-mic-btn');
+        const label = document.getElementById('speaking-recording-label');
+        const input = document.getElementById('speaking-input');
+
+        try {
+            audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            audioChunks = [];
+
+            const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+                ? 'audio/webm;codecs=opus'
+                : 'audio/webm';
+
+            mediaRecorder = new MediaRecorder(audioStream, { mimeType });
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) audioChunks.push(e.data);
+            };
+            mediaRecorder.onstop = async () => {
+                // Stop mic stream
+                if (audioStream) {
+                    audioStream.getTracks().forEach(t => t.stop());
+                    audioStream = null;
+                }
+                // Send to backend for transcription
+                if (audioChunks.length > 0) {
+                    label.textContent = '正在识别...';
+                    label.classList.add('active');
+                    const blob = new Blob(audioChunks, { type: mimeType });
+                    try {
+                        const formData = new FormData();
+                        formData.append('audio', blob, 'recording.webm');
+                        const res = await fetch('/api/speaking/stt', { method: 'POST', body: formData });
+                        const data = await res.json();
+                        if (data.success && data.text) {
+                            input.value = data.text.trim();
+                            input.focus();
+                            label.textContent = '✓ 识别完成';
+                        } else {
+                            label.textContent = '⚠ 未识别到语音，请重试';
+                            console.error('STT failed:', data.error);
+                        }
+                    } catch (e) {
+                        console.error('STT request failed:', e);
+                        label.textContent = '⚠ 识别请求失败';
+                    }
+                    setTimeout(() => { label.classList.remove('active'); label.textContent = ''; }, 2000);
+                } else {
+                    label.textContent = '⚠ 未录到音频，请重试';
+                    label.classList.add('active');
+                    setTimeout(() => { label.classList.remove('active'); label.textContent = ''; }, 2000);
+                }
+                micBtn.classList.remove('recording');
+                isRecording = false;
+            };
+
+            mediaRecorder.start(250); // collect chunks every 250ms
+            micBtn.classList.add('recording');
+            micBtn.textContent = '⏹';
+            label.classList.add('active');
+            label.textContent = '正在聆听... 点击 ⏹ 停止识别';
+            input.value = '';
+            input.placeholder = '说话中... 说完点击停止按钮';
+            isRecording = true;
+
+            // Recording timer
+            recordingSeconds = 0;
+            recordingTimer = setInterval(() => {
+                recordingSeconds++;
+                const mins = Math.floor(recordingSeconds / 60);
+                const secs = recordingSeconds % 60;
+                label.textContent = `● 录音中 ${mins}:${secs.toString().padStart(2, '0')} | 点击 ⏹ 停止`;
+            }, 1000);
+        } catch (e) {
+            console.error('Mic access failed:', e);
+            label.classList.add('active');
+            label.textContent = '⚠ 无法访问麦克风，请检查浏览器权限';
+            setTimeout(() => { label.classList.remove('active'); label.textContent = ''; }, 3000);
+        }
+    }
+
+    function stopRecording() {
+        if (recordingTimer) { clearInterval(recordingTimer); recordingTimer = null; }
+        const micBtn = document.getElementById('speaking-mic-btn');
+        micBtn.textContent = '🎤';
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+        }
+        // onstop handler does the STT request and UI cleanup
+    }
+
+    function speakMessage(text) {
+        // Get voices fresh — Chrome sometimes needs a kick
+        const voices = speechSynthesis.getVoices();
+        const voice = voices.find(v => v.lang === 'en-US')
+            || voices.find(v => v.lang.startsWith('en'))
+            || selectedVoice;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.95;
+        if (voice) utterance.voice = voice;
+        speechSynthesis.speak(utterance);
+    }
+
+    function addSpeakerButton(bubble, text) {
+        const btn = document.createElement('button');
+        btn.className = 'speaker-btn';
+        btn.innerHTML = '🔊';
+        btn.title = 'Read aloud';
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            btn.style.opacity = '1';
+            btn.style.color = '#1a73e8';
+            speakMessage(text);
+            setTimeout(() => { btn.style.opacity = ''; btn.style.color = ''; }, 600);
+        });
+        bubble.appendChild(btn);
+    }
+
+
+    async function startSpeaking() {
+        const btn = document.getElementById('speaking-start-btn');
+        btn.classList.add('loading');
+        btn.disabled = true;
+
+        try {
+            const res = await fetch('/api/speaking/start', { method: 'POST' });
+            if (!res.ok) {
+                const err = await res.json();
+                if (res.status === 503) {
+                    document.getElementById('speaking-key-missing').style.display = 'block';
+                    throw new Error('API key not configured');
+                }
+                throw new Error(err.detail || `status ${res.status}`);
+            }
+            const body = await res.json();
+            speakingSessionId = body.session.id;
+            speakingActive = true;
+
+            document.getElementById('speaking-topic-name').innerText = body.session.topic;
+            document.getElementById('speaking-start').style.display = 'none';
+            document.getElementById('speaking-chat').style.display = 'block';
+            document.getElementById('speaking-evaluation').style.display = 'none';
+            document.getElementById('speaking-input').disabled = false;
+            document.getElementById('speaking-send-btn').disabled = false;
+            document.getElementById('speaking-end-btn').disabled = false;
+
+            renderMessages(body.messages);
+            initVoice();
+            document.getElementById('speaking-input').focus();
+        } catch (e) {
+            console.error('startSpeaking failed:', e);
+        } finally {
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+    }
+
+    async function sendSpeakingMessage() {
+        const input = document.getElementById('speaking-input');
+        const message = input.value.trim();
+        if (!message || !speakingActive) return;
+
+        input.value = '';
+        input.disabled = true;
+        document.getElementById('speaking-send-btn').disabled = true;
+        document.getElementById('speaking-end-btn').disabled = true;
+
+        // Show user message immediately
+        appendMessage({ role: 'user', content: message });
+        showTyping(true);
+
+        try {
+            const res = await fetch(`/api/speaking/${speakingSessionId}/respond`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message }),
+            });
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.detail || `status ${res.status}`);
+            }
+            const body = await res.json();
+            showTyping(false);
+            renderMessages(body.messages);
+            scrollMessages();
+        } catch (e) {
+            console.error('sendSpeakingMessage failed:', e);
+            showTyping(false);
+            appendMessage({ role: 'examiner', content: 'Sorry, an error occurred. Please try again.' });
+        } finally {
+            input.disabled = false;
+            document.getElementById('speaking-send-btn').disabled = false;
+            document.getElementById('speaking-end-btn').disabled = false;
+            input.focus();
+        }
+    }
+
+    async function endSpeaking() {
+        if (!speakingSessionId || !speakingActive) return;
+
+        if (isRecording) { stopRecording(); }
+        speechSynthesis.cancel();
+
+        const endBtn = document.getElementById('speaking-end-btn');
+        endBtn.disabled = true;
+        showTyping(true);
+
+        try {
+            const res = await fetch(`/api/speaking/${speakingSessionId}/evaluate`, {
+                method: 'POST',
+            });
+            const body = await res.json();
+            speakingActive = false;
+            showTyping(false);
+
+            document.getElementById('speaking-chat').style.display = 'none';
+            document.getElementById('speaking-evaluation').style.display = 'block';
+            renderEvaluation(body.session.evaluation);
+        } catch (e) {
+            console.error('endSpeaking failed:', e);
+            showTyping(false);
+        } finally {
+            endBtn.disabled = false;
+        }
+    }
+
+    function resetSpeaking() {
+        if (isRecording) { stopRecording(); }
+        speechSynthesis.cancel();
+        autoSpeak = false;
+        document.getElementById('auto-speak-checkbox').checked = false;
+        speakingSessionId = null;
+        speakingActive = false;
+        document.getElementById('speaking-start').style.display = 'block';
+        document.getElementById('speaking-chat').style.display = 'none';
+        document.getElementById('speaking-evaluation').style.display = 'none';
+        document.getElementById('speaking-messages').innerHTML = '';
+        document.getElementById('speaking-input').value = '';
+    }
+
+    function renderMessages(messages) {
+        const container = document.getElementById('speaking-messages');
+        container.innerHTML = '';
+        messages.forEach(m => appendMessage(m));
+    }
+
+    function appendMessage(msg) {
+        const container = document.getElementById('speaking-messages');
+        const div = document.createElement('div');
+        div.className = 'chat-message ' + (msg.role === 'examiner' ? 'examiner' : 'user');
+
+        const roleSpan = document.createElement('span');
+        roleSpan.className = 'chat-role';
+        roleSpan.innerText = msg.role === 'examiner' ? 'Examiner' : 'You';
+
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble';
+        bubble.innerText = msg.content;
+
+        div.appendChild(roleSpan);
+        div.appendChild(bubble);
+
+        // Add speaker button for examiner messages
+        if (msg.role === 'examiner') {
+            addSpeakerButton(bubble, msg.content);
+        }
+
+        container.appendChild(div);
+        scrollMessages();
+
+        // Auto-speak examiner messages if enabled
+        if (msg.role === 'examiner' && autoSpeak) {
+            speakMessage(msg.content);
+        }
+    }
+
+    function showTyping(show) {
+        const indicator = document.getElementById('speaking-typing');
+        if (indicator) {
+            indicator.classList.toggle('active', show);
+        }
+    }
+
+    function scrollMessages() {
+        const container = document.getElementById('speaking-messages');
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function renderEvaluation(evalData) {
+        if (!evalData) return;
+        const criteria = [
+            { key: 'fluency_coherence', label: '流利度与连贯性' },
+            { key: 'lexical_resource', label: '词汇资源' },
+            { key: 'grammatical_range', label: '语法范围与准确性' },
+        ];
+
+        let html = '';
+        html += `<div class="eval-score-big">
+            <div class="eval-score-number">${evalData.overall_band ?? '--'}</div>
+            <div class="eval-score-label">Overall Band Score</div>
+        </div>`;
+
+        html += '<div class="eval-criteria">';
+        criteria.forEach(c => {
+            const data = evalData[c.key] || {};
+            html += `<div class="eval-criterion">
+                <div class="score">${data.score ?? '--'}</div>
+                <div class="label">${c.label}</div>
+                <div class="comment">${data.comment || ''}</div>
+            </div>`;
+        });
+        html += '</div>';
+
+        if (evalData.strengths && evalData.strengths.length) {
+            html += '<div class="eval-section"><h4>✅ 做得好的地方</h4><ul>';
+            evalData.strengths.forEach(s => { html += `<li>${s}</li>`; });
+            html += '</ul></div>';
+        }
+
+        if (evalData.improvements && evalData.improvements.length) {
+            html += '<div class="eval-section"><h4>📝 需要改进的地方</h4><ul>';
+            evalData.improvements.forEach(s => { html += `<li>${s}</li>`; });
+            html += '</ul></div>';
+        }
+
+        if (evalData.notable_vocabulary && evalData.notable_vocabulary.length) {
+            html += '<div class="eval-section"><h4>📖 精彩用词</h4><p style="color: #444; font-size: 14px;">';
+            html += evalData.notable_vocabulary.join('、');
+            html += '</p></div>';
+        }
+
+        document.getElementById('speaking-eval-content').innerHTML = html;
+    }
+
     function initializeApp() {
         document.querySelectorAll('.nav-item').forEach(el => {
             el.addEventListener('click', e => switchTab(el.dataset.tab, e));
@@ -388,10 +1243,30 @@
         document.querySelectorAll('.interest-tag').forEach(el => {
             el.addEventListener('click', () => el.classList.toggle('selected'));
         });
-        document.getElementById('save-prefs-btn').addEventListener('click', savePreferences);
-        document.getElementById('search-btn').addEventListener('click', lookupWord);
+	        document.getElementById('save-prefs-btn').addEventListener('click', savePreferences);
+	        document.getElementById('search-btn').addEventListener('click', lookupWord);
+	        document.getElementById('image-btn').addEventListener('click', generateImage);
+	        document.querySelectorAll('.size-option').forEach(el => {
+	            el.addEventListener('click', () => {
+	                document.querySelectorAll('.size-option').forEach(o => o.classList.remove('active'));
+	                el.classList.add('active');
+	                currentImageSize = el.dataset.size;
+	            });
+	        });
         document.getElementById('word-input').addEventListener('keypress', e => {
             if (e.key === 'Enter') lookupWord();
+        });
+
+        document.getElementById('speaking-start-btn').addEventListener('click', startSpeaking);
+        document.getElementById('speaking-send-btn').addEventListener('click', sendSpeakingMessage);
+        document.getElementById('speaking-end-btn').addEventListener('click', endSpeaking);
+        document.getElementById('speaking-retry-btn').addEventListener('click', resetSpeaking);
+        document.getElementById('speaking-mic-btn').addEventListener('click', toggleMic);
+        document.getElementById('speaking-input').addEventListener('keypress', e => {
+            if (e.key === 'Enter') sendSpeakingMessage();
+        });
+        document.getElementById('auto-speak-checkbox').addEventListener('change', e => {
+            autoSpeak = e.target.checked;
         });
 
         loadPreferences().then(setDailyWord);

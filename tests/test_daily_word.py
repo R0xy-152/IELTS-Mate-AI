@@ -21,7 +21,7 @@ def _seed_word(db, word, tags, **kwargs):
 
 def test_daily_word_uses_db_when_word_matches_no_tags(client, db_session):
     """No saved preferences, but the DB has a word — it should be picked."""
-    _seed_word(db_session, "alpha", [])
+    _seed_word(db_session, "alpha", ["Programming"])
     r = client.get("/api/daily_word")
     assert r.status_code == 200
     body = r.json()
@@ -38,6 +38,30 @@ def test_daily_word_filters_by_selected_tags(client, db_session):
     r = client.get("/api/daily_word")
     assert r.status_code == 200
     assert r.json()["data"]["word"] == "ballad"
+
+
+def test_daily_word_matches_any_selected_tag(client, db_session):
+    """User picked Music + Technology — a word matching either tag is eligible."""
+    _seed_word(db_session, "thermal", ["Technology"])
+    _seed_word(db_session, "ballad", ["Music"])
+    _seed_word(db_session, "statute", ["Law"])
+    db_session.add(main.UserPreference(selected_tags=json.dumps(["Music", "Technology"])))
+    db_session.commit()
+
+    r = client.get("/api/daily_word")
+    assert r.status_code == 200
+    assert r.json()["data"]["word"] in {"ballad", "thermal"}
+
+
+def test_daily_word_tag_match_does_not_use_partial_substrings(client, db_session):
+    """Selecting Art should not match Architecture just because it shares letters."""
+    _seed_word(db_session, "facade", ["Architecture"])
+    db_session.add(main.UserPreference(selected_tags=json.dumps(["Art"])))
+    db_session.commit()
+
+    r = client.get("/api/daily_word")
+    assert r.status_code == 200
+    assert r.json()["data"]["word"] == "sustainability"
 
 
 def test_daily_word_caches_within_same_day(client, db_session):
@@ -74,8 +98,10 @@ def test_daily_word_safety_net_falls_back_to_random(
     assert r.json()["data"]["word"] == "orphan"
 
 
-def test_daily_word_503_when_db_empty_and_ai_unavailable(client, monkeypatch):
-    """Empty DB, no API key configured, AI suggestion fails -> 503."""
+def test_daily_word_uses_builtin_fallback_when_db_empty_and_ai_unavailable(
+    client, monkeypatch
+):
+    """Empty DB, no API key configured, AI suggestion fails -> built-in word."""
     monkeypatch.setattr(main, "GEMINI_API_KEY", None)
 
     def _boom(tags):
@@ -83,7 +109,10 @@ def test_daily_word_503_when_db_empty_and_ai_unavailable(client, monkeypatch):
     monkeypatch.setattr(main, "ai_suggest_word_for_tags", _boom)
 
     r = client.get("/api/daily_word")
-    assert r.status_code == 503
+    assert r.status_code == 200
+    body = r.json()
+    assert body["data"]["word"] == "algorithm"
+    assert body["data"]["tags"] == ["Programming", "Technology"]
 
 
 def test_daily_word_uses_ai_suggestion_when_db_lacks_tag_match(

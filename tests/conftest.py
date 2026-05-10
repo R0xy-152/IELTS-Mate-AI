@@ -87,7 +87,33 @@ def stub_externals(monkeypatch):
     monkeypatch.setattr(
         main, "ai_suggest_word_for_tags", lambda tags: "sustainability"
     )
+    # Speaking examiner stubs — deterministic replies
+    _examiner_counter = [0]
+
+    def _mock_examiner_message(history, topic):
+        _examiner_counter[0] += 1
+        return f"Examiner question #{_examiner_counter[0]} about {topic}."
+
+    monkeypatch.setattr(
+        main, "_examiner_next_message", _mock_examiner_message
+    )
+    monkeypatch.setattr(
+        main,
+        "_examiner_evaluate_conversation",
+        lambda history, topic, duration: {
+            "overall_band": 6.0,
+            "fluency_coherence": {"score": 6.0, "comment": "表达基本流畅。"},
+            "lexical_resource": {"score": 5.5, "comment": "词汇使用较基础。"},
+            "grammatical_range": {"score": 6.0, "comment": "语法基本准确。"},
+            "strengths": ["发音清晰", "回答自然"],
+            "improvements": ["可扩大词汇量", "可多使用复杂句"],
+            "notable_vocabulary": ["interesting", "important"],
+        },
+    )
     # By default, treat the API key as configured so the "last resort"
     # generation path in /api/daily_word is reachable. Tests that want to
     # simulate the missing-key case can override this.
     monkeypatch.setattr(main, "GEMINI_API_KEY", "test-key")
+    # Keep legacy endpoint tests independent from the production demo limit.
+    # Dedicated quota tests override this back to 1.
+    monkeypatch.setattr(main, "IMAGE_DAILY_LIMIT_PER_IP", 100)
